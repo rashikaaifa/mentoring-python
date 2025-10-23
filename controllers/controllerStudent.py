@@ -1,12 +1,14 @@
 import re
 from typing import Any
+
 from fastapi import HTTPException
 
-from models.modelDepartment import DepartmentCreate, DepartmentRequestCreate, DepartmentRequestUpdate, DepartmentView
-from mongodb.mongoCollection import TbDepartment
-from repositories.repoDepartment import DepartmentRepository
+from models.modelStudent import StudentCreate, StudentRequestCreate, StudentRequestUpdate, StudentView
+from mongodb.mongoCollection import TbStudent
+from repositories.repoStudent import StudentRepository
 
-class DepartmentController:
+
+class StudentController:
 	@staticmethod
 	def Find(
 		name: str | None,
@@ -19,7 +21,7 @@ class DepartmentController:
 		if name:
 			query["name"] = {"$regex": re.compile(name, re.IGNORECASE)}
 			
-		total_items = TbDepartment.count_documents(query)
+		total_items = TbStudent.count_documents(query)
 		total_pages = (total_items + size - 1) // size if total_items > 0 else 0
 		
 		start = (page - 1) * size
@@ -29,13 +31,13 @@ class DepartmentController:
 				detail=f"Halaman {page} tidak ditemukan (total halaman {total_pages})"
 	  		)
 		
-		departments = list(
-			TbDepartment.find(query)
+		student = list(
+			TbStudent.find(query)
 			.skip(start)
 			.limit(size)
 		)
 		
-		for p in departments:
+		for p in student:
 			p["_id"] = str(p["_id"])
 		
 		return {
@@ -44,16 +46,16 @@ class DepartmentController:
 				"size": size,
 				"total_items": total_items,
 				"total_pages": total_pages,
-				"items": departments
+				"items": student
 			}
 		}
 	
 	@staticmethod
 	def GetById(
-		departmentId: str
-	) -> DepartmentView:
-		data = DepartmentRepository.GetById(
-			departmentId=departmentId
+		studentId: str
+	) -> StudentView:
+		data = StudentRepository.GetById(
+			studentId=studentId
 		)
 		
 		if not data:
@@ -66,13 +68,13 @@ class DepartmentController:
 	
 	@staticmethod
 	def Create(
-		param: DepartmentRequestCreate
+		param: StudentRequestCreate
 	):
-		newDataId = DepartmentRepository.Create(
-			param=DepartmentCreate(
+		newDataId = StudentRepository.Create(
+			param=StudentCreate(
 				name=param.name,
-				wearpackColor=param.wearpackColor,
-				desc=param.desc,
+				nis=param.nis,
+				kelasId=param.kelasId,
 				isDeleted=False
 			)
 		)
@@ -80,22 +82,22 @@ class DepartmentController:
 		if not newDataId:
 			raise HTTPException(
 				status_code=500,
-				detail="Failed to Create Department"
+				detail="Failed to Create Student"
 			)
 		
 		return newDataId
 	
 	@staticmethod
 	def Update(
-		departmentId: str,
-		param: DepartmentRequestUpdate
+		studentId: str,
+		param: StudentRequestUpdate
 	):
-		currentData: DepartmentView = DepartmentController.GetById(
-			departmentId=departmentId
+		currentData: StudentView = StudentController.GetById(
+			studentId=studentId
 		)
 		
-		if not DepartmentRepository.Update(
-			departmentId=currentData.id,
+		if not StudentRepository.Update(
+			studentId=currentData.id,
 			param=param.model_dump()
 		):
 			raise HTTPException(
@@ -106,14 +108,14 @@ class DepartmentController:
 	
 	@staticmethod
 	def Delete(
-		departmentId: str,
+		studentId: str,
 	):
-		currentData = DepartmentController.GetById(
-			departmentId=departmentId
+		currentData = StudentController.GetById(
+			studentId=studentId
 		)
 		
-		if not DepartmentRepository.Update(
-			departmentId=currentData.id,
+		if not StudentRepository.Update(
+			studentId=currentData.id,
 			param={
 				"isDeleted": True
 			}

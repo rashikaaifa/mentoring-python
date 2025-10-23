@@ -9,7 +9,7 @@ class DepartmentBase(BaseModel):
   		title="Nama",
   		description="Nama jurusan di SMK RUS"
 	)
-    wearpack: str = Field(
+    wearpackColor: str = Field(
 		default=...,
   		title="Wearpack",
   		description="Warna wearpack sesuai jurusan"
@@ -30,7 +30,7 @@ class DepartmentRequestUpdate(BaseModel):
   		title="Nama",
   		description="Nama jurusan di SMK RUS"
 	)
-    wearpack: str = Field(
+    wearpackColor: str = Field(
 		default=...,
   		title="Wearpack",
   		description="Warna wearpack sesuai jurusan"

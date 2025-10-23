@@ -5,7 +5,6 @@ from fastapi import HTTPException
 
 from models.modelKelas import KelasCreate, KelasRequestCreate, KelasRequestUpdate, KelasView
 from mongodb.mongoCollection import TbKelas
-from repositories.repoGrade import GradeRepository
 from repositories.repoKelas import KelasRepository
 
 
@@ -70,20 +69,11 @@ class KelasController:
     @staticmethod
     def Create(
 		param: KelasRequestCreate
-	):
-        grade = GradeRepository.GetById(param.gradeId)
-        if not grade:
-            raise HTTPException(
-				status_code=404,
-				detail="Kelas not Found"
-			)
-            
-        # combineName = f"{grade.grade.value} "
-               
+	):  
         newDataId = KelasRepository.Create(
 			param=KelasCreate(
-                gradeId=param.gradeId,
-				# name=combineName,
+                name=param.name,
+                departmentId=param.departmentId,
 				isDeleted=False
 			)
 		)

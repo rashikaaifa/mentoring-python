@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from routes.routerDepartment import ApiRouter_Department
-from routes.routerGrade import ApiRouter_Grade
 from routes.routerKelas import ApiRouter_Kelas
+from routes.routerStudent import ApiRouter_Student
 
 app = FastAPI(
     title="Belajar FastAPI",
@@ -10,5 +10,5 @@ app = FastAPI(
 )
 
 app.include_router(ApiRouter_Department)
-app.include_router(ApiRouter_Grade)
 app.include_router(ApiRouter_Kelas)
+app.include_router(ApiRouter_Student)
